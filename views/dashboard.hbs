@@ -1,3 +1,39 @@
 {{!-- This goes into view/layouts/main --}}
 
-<h1>Dashboard page</h1>
+<h6>Dashboard page</h6>
+<h1>welcome  {{name}}</h1>
+<p>Here are your stories</p>
+
+{{#if stories}}
+    <table class="striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each stories}}
+            <tr>
+                <td><a href="/stories/{{_id}}"></a>{{title}}</td>
+                {{!-- Brad Travery uses this
+
+                -> <td>{{formatDate createdAt 'MMMM Do YYYY, h:mm:ss a'}}</td> 
+                
+                however it doesn't work for the reason
+                https://stackoverflow.com/questions/33090521/handlebars-helpers-in-each-block
+                 --}}
+                <td>{{formatDate createdAt 'MMMM Do YYYY, h:mm:ss a'}}</td>
+                <td><span class="dash-status">{{status}}</span></td>
+                <td></td>
+            </tr>
+            {{/each}}
+        </tbody>
+
+    </table>
+{{else}}
+
+    <p>You have not created any stories yet</p>
+{{/if}}

@@ -1,8 +1,11 @@
+// @ts-nocheck
 // import express from 'express'
 
 const express = require('express')
 const router = express.Router()
 const { ensureAuth, ensureGuest } = require('../middleware/auth')
+const Story = require('../models/Story')
+
 // @desc Login/Landing Page
 // @route GET /
 
@@ -19,8 +22,23 @@ router.get('/', ensureGuest, (req, res) => {
 // @route GET /dashboard
 
 //if you tried to go to '/dashboard' without already logging-in, using the middleware:ensureAuth..redirect them to '/'
-router.get('/dashboard', ensureAuth, (req, res) => {
-    res.render('dashboard')     //By default the layout goes to main(since that's what we mentioned in app.js)
+router.get('/dashboard', ensureAuth,async (req, res) => {
+    console.log(req.user.id)
+    try {
+        const stories = await Story.find({user: req.user.id}).lean()
+        res.render(
+            'dashboard', // By default the layout goes to main(since that's what we mentioned in app.js)
+            {
+                name:req.user.firstName,
+                stories,
+            }
+         ) 
+    } catch (err) {
+        console.log(err);
+        res.render('error/500')
+    }
+
+
 })
 
 // export default router
@@ -34,7 +52,4 @@ google cloud console ->
                         -> API Library -> Google+ API -> ENABLE
                         -> Credentials -> CREATE CREDENTIALS > OAuth client ID
                         -> Authorized redirect URIs > 'http://localhost:3000/auth/google/callback' -> CREATE -> COPY CLIENT_ID and CLIENT_SECRET
-
-
-
 */
